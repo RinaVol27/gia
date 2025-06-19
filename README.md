@@ -1,3 +1,4 @@
 # gia
-полезные команды
-<bold>Set-ExecutionPolicy RemoteSigned</bold>
+Set-ExecutionPolicy RemoteSigned
+npm install --global expo-cli
+expo init
