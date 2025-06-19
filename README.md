@@ -1,4 +1,4 @@
 # gia
-Set-ExecutionPolicy RemoteSigned
-npm install --global expo-cli
+Set-ExecutionPolicy RemoteSigned<br>
+npm install --global expo-cli<br>
 expo init
