@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Личный кабинет — Грузоперевозки</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fa;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      background-color: #0057b8;
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      height: 40px;
+    }
+
+    .username {
+      font-weight: 500;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    h2, h3 {
+      text-align: center;
+    }
+
+    form {
+      margin-top: 30px;
+    }
+
+    label {
+      display: block;
+      margin-top: 16px;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .row > div {
+      flex: 1;
+    }
+
+    .btn {
+      background-color: #0057b8;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-top: 24px;
+      cursor: pointer;
+      transition: background 0.3s;
+      width: 100%;
+    }
+
+    .btn:hover {
+      background-color: #003f8a;
+    }
+
+    .applications {
+      margin-top: 50px;
+    }
+
+    .application {
+      background: #f9fafc;
+      padding: 16px 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+
+    .application h4 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: #0057b8;
+    }
+
+    .application p {
+      margin: 4px 0;
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .row {
+        flex-direction: column;
+      }
+
+      .container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <img src="../img/Untitled-1.png" alt="Логотип" />
+    </div>
+    <div class="username">Пользователь: <span id="username">Иван Иванов</span></div>
+  </header>
+
+  <div class="container">
+    <h2>Оставить заявку на перевозку груза</h2>
+
+    <form id="cargoForm">
+      <label for="date">Дата перевозки</label>
+      <input type="date" id="date" required />
+
+      <label for="time">Время</label>
+      <input type="time" id="time" required />
+
+      <label for="weight">Вес груза (в кг)</label>
+      <input type="number" id="weight" min="0" required />
+
+      <div class="row">
+        <div>
+          <label for="width">Ширина (м)</label>
+          <input type="number" id="width" step="0.01" required />
+        </div>
+        <div>
+          <label for="length">Длина (м)</label>
+          <input type="number" id="length" step="0.01" required />
+        </div>
+        <div>
+          <label for="height">Высота (м)</label>
+          <input type="number" id="height" step="0.01" required />
+        </div>
+      </div>
+
+      <label for="type">Тип груза</label>
+      <input type="text" id="type" required />
+
+      <label for="from">Адрес отправления</label>
+      <input type="text" id="from" required />
+
+      <label for="to">Адрес доставки</label>
+      <input type="text" id="to" required />
+
+      <label for="comments">Комментарии (доп. пожелания)</label>
+      <textarea id="comments" placeholder="Например, срочность, температурный режим и т.д."></textarea>
+
+      <button type="submit" class="btn">Отправить заявку</button>
+    </form>
+
+    <div class="applications">
+      <h3>Мои заявки</h3>
+      <div id="applicationsList">
+        <p style="color: #777;">Заявок пока нет.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('cargoForm');
+    const applicationsList = document.getElementById('applicationsList');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+      const weight = document.getElementById('weight').value;
+      const width = document.getElementById('width').value;
+      const length = document.getElementById('length').value;
+      const height = document.getElementById('height').value;
+      const type = document.getElementById('type').value;
+      const from = document.getElementById('from').value;
+      const to = document.getElementById('to').value;
+      const comments = document.getElementById('comments').value;
+
+      const appHTML = `
+        <div class="application">
+          <h4>Перевозка ${type}</h4>
+          <p><strong>Дата:</strong> ${date}, <strong>время:</strong> ${time}</p>
+          <p><strong>Вес:</strong> ${weight} кг</p>
+          <p><strong>Габариты:</strong> ${width}м × ${length}м × ${height}м</p>
+          <p><strong>Откуда:</strong> ${from}</p>
+          <p><strong>Куда:</strong> ${to}</p>
+          <p><strong>Комментарии:</strong> ${comments || '—'}</p>
+        </div>
+      `;
+
+      applicationsList.insertAdjacentHTML('afterbegin', appHTML);
+
+      // Очистить форму
+      form.reset();
+
+      // Удалить сообщение "заявок пока нет"
+      const noAppsMsg = applicationsList.querySelector('p');
+      if (noAppsMsg) noAppsMsg.remove();
+    });
+  </script>
+</body>
+</html>

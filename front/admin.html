@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Админ-панель — Грузоперевозки</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fa;
+      color: #333;
+    }
+
+    header {
+      background-color: #0057b8;
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      height: 40px;
+    }
+
+    .username {
+      font-weight: 500;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .export-btn {
+      display: block;
+      margin: 0 auto 30px;
+      padding: 10px 20px;
+      background-color: #007acc;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .application {
+      border: 1px solid #ddd;
+      background: #f9fafc;
+      padding: 16px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .application h4 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      color: #0057b8;
+    }
+
+    .application p {
+      margin: 4px 0;
+      font-size: 14px;
+    }
+
+    .actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 6px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .approve { background-color: #4CAF50; color: white; }
+    .complete { background-color: #2196F3; color: white; }
+    .delete { background-color: #f44336; color: white; }
+
+    .status {
+      margin-top: 10px;
+      font-weight: bold;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <img src="../img/Untitled-1.png" alt="Логотип" />
+    </div>
+    <div class="username">Администратор: <span id="adminName">Админ</span></div>
+  </header>
+
+  <div class="container">
+    <h2>Все заявки на перевозку</h2>
+    <button class="export-btn" onclick="exportToExcel()">Экспорт в Excel</button>
+    <div id="applicationsList"></div>
+  </div>
+
+  <script>
+    const applications = [
+      {
+        user: {
+          fullName: "Иван Иванов",
+          phone: "+7 900 123-45-67",
+          email: "ivan@example.com"
+        },
+        type: "Бытовая техника",
+        from: "Москва, ул. Ленина, 12",
+        to: "Тула, ул. Пролетарская, 8",
+        weight: 150,
+        dimensions: { width: 1.2, length: 1.8, height: 1.5 },
+        date: "2025-06-25",
+        time: "14:00",
+        comments: "Осторожно с холодильником",
+        status: "ожидает одобрения"
+      },
+      {
+        user: {
+          fullName: "Анна Смирнова",
+          phone: "+7 911 765-43-21",
+          email: "anna@example.com"
+        },
+        type: "Мебель",
+        from: "Санкт-Петербург, Невский пр., 100",
+        to: "Псков, ул. Комсомольская, 22",
+        weight: 200,
+        dimensions: { width: 2, length: 2, height: 1.5 },
+        date: "2025-06-27",
+        time: "09:30",
+        comments: "",
+        status: "одобрено"
+      }
+    ];
+
+    const container = document.getElementById('applicationsList');
+
+    function renderApplications() {
+      container.innerHTML = '';
+      if (applications.length === 0) {
+        container.innerHTML = '<p style="color:#777;">Заявок нет.</p>';
+        return;
+      }
+
+      applications.forEach((app, index) => {
+        const appEl = document.createElement('div');
+        appEl.classList.add('application');
+        appEl.innerHTML = `
+          <h4>Груз: ${app.type}</h4>
+          <p><strong>Клиент:</strong> ${app.user.fullName}</p>
+          <p><strong>Телефон:</strong> ${app.user.phone}</p>
+          <p><strong>Email:</strong> ${app.user.email}</p>
+          <p><strong>Дата:</strong> ${app.date}, <strong>время:</strong> ${app.time}</p>
+          <p><strong>Вес:</strong> ${app.weight} кг</p>
+          <p><strong>Габариты:</strong> ${app.dimensions.width}м × ${app.dimensions.length}м × ${app.dimensions.height}м</p>
+          <p><strong>Откуда:</strong> ${app.from}</p>
+          <p><strong>Куда:</strong> ${app.to}</p>
+          <p><strong>Комментарий:</strong> ${app.comments || "—"}</p>
+          <p class="status">Статус: ${app.status}</p>
+          <div class="actions">
+            <button class="btn approve" onclick="updateStatus(${index}, 'одобрено')">Одобрить</button>
+            <button class="btn complete" onclick="updateStatus(${index}, 'выполнено')">Выполнено</button>
+            <button class="btn delete" onclick="deleteApp(${index})">Удалить</button>
+          </div>
+        `;
+        container.appendChild(appEl);
+      });
+    }
+
+    function updateStatus(index, newStatus) {
+      applications[index].status = newStatus;
+      renderApplications();
+    }
+
+    function deleteApp(index) {
+      if (confirm("Удалить эту заявку?")) {
+        applications.splice(index, 1);
+        renderApplications();
+      }
+    }
+
+    function exportToExcel() {
+      const exportData = applications.map(app => ({
+        "ФИО клиента": app.user.fullName,
+        "Телефон": app.user.phone,
+        "Email": app.user.email,
+        "Тип груза": app.type,
+        "Дата": app.date,
+        "Время": app.time,
+        "Вес (кг)": app.weight,
+        "Габариты (Ш×Д×В)": `${app.dimensions.width}×${app.dimensions.length}×${app.dimensions.height}`,
+        "Откуда": app.from,
+        "Куда": app.to,
+        "Комментарий": app.comments || "—",
+        "Статус": app.status
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Заявки");
+
+      XLSX.writeFile(workbook, "zayavki.xlsx");
+    }
+
+    renderApplications();
+  </script>
+</body>
+</html>

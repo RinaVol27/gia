@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Регистрация — Грузоперевозки</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 40px;
+      max-width: 400px;
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #555;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 18px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    input:focus {
+      border-color: #0057b8;
+      outline: none;
+      box-shadow: 0 0 3px #0057b880;
+    }
+
+    .btn {
+      background-color: #0057b8;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      width: 100%;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #003f8a;
+    }
+
+    .note {
+      font-size: 12px;
+      color: #777;
+      margin-top: -10px;
+      margin-bottom: 12px;
+    }
+    .link {
+      color: #0057b8;
+      text-decoration: none;
+    }
+
+    .link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Регистрация</h2>
+    <form onsubmit="return validateForm()">
+      <label for="fullName">ФИО</label>
+      <input type="text" id="fullName" name="fullName" required />
+
+      <label for="phone">Телефон</label>
+      <input type="tel" id="phone" name="phone" placeholder="+7..." required />
+
+      <label for="email">Электронная почта</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="username">Логин (на кириллице, не менее 6 символов)</label>
+      <input type="text" id="username" name="username" pattern="[А-Яа-яЁё]{6,}" title="Используйте минимум 6 символов на кириллице" required />
+
+      <label for="password">Пароль (не менее 6 символов)</label>
+      <input type="password" id="password" name="password" minlength="6" required />
+
+      <button type="submit" class="btn">Зарегистрироваться</button>
+      <p class="have-account">Уже есть аккаунт? <a href="./aut.html" class="link">⭢ Войти</a></p>
+    </form>
+  </div>
+
+  <script>
+    function validateForm() {
+      const username = document.getElementById('username').value;
+      const cyrillicPattern = /^[А-Яа-яЁё]{6,}$/;
+      if (!cyrillicPattern.test(username)) {
+        alert('Логин должен содержать минимум 6 символов на кириллице.');
+        return false;
+      }
+      return true;
+    }
+  </script>
+</body>
+</html>
